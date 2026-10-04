@@ -1,0 +1,163 @@
+{
+  "assignment": "ML-09",
+  "audited_notebook": "work/notebooks/w05_model.ipynb",
+  "paper": "docs/flyrank-seo-research-march-2026.pdf",
+  "findings_audited": [
+    {
+      "id": "A",
+      "title": "The Anatomy of Growing Content",
+      "page": 6,
+      "label": "trend_direction = 30d-vs-prev-30d impression change, same window as the profiled features",
+      "my_answer": "my label window opens the day after my feature window closes (asserted)"
+    },
+    {
+      "id": "B",
+      "title": "What Predicts Growth?",
+      "page": 29,
+      "label": "same trend_direction buckets; split described as 80/20 on p.36, not grouped by brand",
+      "my_answer": "base rate printed beside every P@K; 6-fold client-grouped out-of-fold evaluation"
+    }
+  ],
+  "frame_rows": 119115,
+  "frame_clients": 28,
+  "pool_rows": 67279,
+  "pool_clients": 24,
+  "positives": 7445,
+  "base_rate": 0.11065860075209204,
+  "features_contract": [
+    "log_impr_prior",
+    "ctr_prior_pct",
+    "wtd_pos_prior",
+    "active_days_prior",
+    "content_age_days"
+  ],
+  "features_probe": [
+    "log_impr_prior",
+    "ctr_prior_pct",
+    "wtd_pos_prior",
+    "active_days_prior",
+    "content_age_days",
+    "trend_pct_win"
+  ],
+  "decision_point": "2026-03-01",
+  "seed": 42,
+  "oof_folds": 6,
+  "inner_folds_for_l2": 3,
+  "ml07_reference": {
+    "p_at_50": 0.72,
+    "base_rate": 0.110659,
+    "random_floor_p_at_50": 0.111,
+    "forward_p_at_50": 0.34
+  },
+  "ml08_as_shipped": {
+    "best_l2": 0.0001,
+    "model_A_val_p50": 0.24,
+    "model_A_full_p50": 0.48,
+    "model_B_val_p50": 0.24,
+    "model_B_full_p50": 0.52
+  },
+  "before_after_p50": {
+    "A contract (5 feats)": {
+      "before_full_pool_mixed_in_sample": 0.48,
+      "before_val_l2_tuned_on_that_val": 0.24,
+      "before_train_rows_in_sample": 0.48,
+      "mid_val_nested_l2": 0.22,
+      "after_out_of_fold": 0.3,
+      "after_out_of_fold_p20": 0.35,
+      "after_out_of_fold_p200": 0.385,
+      "per_fold_p50": [
+        0.26,
+        0.38,
+        0.54,
+        0.36,
+        0.48,
+        0.38
+      ],
+      "l2_shipped": 0.0001,
+      "l2_nested": 1.0
+    },
+    "B probe (+trend_pct_win)": {
+      "before_full_pool_mixed_in_sample": 0.52,
+      "before_val_l2_tuned_on_that_val": 0.24,
+      "before_train_rows_in_sample": 0.52,
+      "mid_val_nested_l2": 0.22,
+      "after_out_of_fold": 0.28,
+      "after_out_of_fold_p20": 0.25,
+      "after_out_of_fold_p200": 0.375,
+      "per_fold_p50": [
+        0.26,
+        0.38,
+        0.54,
+        0.36,
+        0.48,
+        0.38
+      ],
+      "l2_shipped": 0.0001,
+      "l2_nested": 1.0
+    }
+  },
+  "population_selection": {
+    "decided_pool_rows": 67514,
+    "surviving_rows": 67279,
+    "removed_by_march_inner_join": 235,
+    "removed_share_of_decided_pool": 0.003480759546168202,
+    "removed_clearing_volume_floor": 36,
+    "base_rate_frame_as_built": 0.11065860075209204,
+    "base_rate_if_left_join_zero_filled": 0.11080664751014604,
+    "verdict": "outcome-conditioned selection, inherited from ML-04; not a feature leak"
+  },
+  "leak_trap": {
+    "feature_added": "log_impr_label_leak",
+    "honest_p50": 0.3,
+    "leaked_p50": 1.0,
+    "lift": 3.3333333333333335
+  },
+  "permutation_importance_p50_drop": {
+    "A contract (5 feats)": {
+      "log_impr_prior": 0.23433333333333337,
+      "ctr_prior_pct": -0.018,
+      "wtd_pos_prior": 0.03516666666666667,
+      "active_days_prior": 0.006833333333333334,
+      "content_age_days": 0.009666666666666672
+    },
+    "B probe (+trend_pct_win)": {
+      "log_impr_prior": 0.23583333333333337,
+      "ctr_prior_pct": -0.013166666666666662,
+      "wtd_pos_prior": 0.04066666666666668,
+      "active_days_prior": 0.013166666666666662,
+      "content_age_days": 0.015333333333333343,
+      "trend_pct_win": 0.0006666666666666649
+    }
+  },
+  "coefficient_attention_share_pct": {
+    "A contract (5 feats)": {
+      "log_impr_prior": 27.646042514443913,
+      "ctr_prior_pct": 4.5868893804526545,
+      "wtd_pos_prior": 24.050955891512046,
+      "active_days_prior": 28.47641994547296,
+      "content_age_days": 15.239692268118425
+    },
+    "B probe (+trend_pct_win)": {
+      "log_impr_prior": 27.75353558224293,
+      "ctr_prior_pct": 4.734036062692415,
+      "wtd_pos_prior": 23.223508014952028,
+      "active_days_prior": 27.92608364629457,
+      "content_age_days": 14.775905473272369,
+      "trend_pct_win": 1.586931220545693
+    }
+  },
+  "leak_trap_importance_check": {
+    "log_impr_prior": 0.8811666666666665,
+    "ctr_prior_pct": 0.00016666666666666682,
+    "wtd_pos_prior": 0.0006666666666666673,
+    "active_days_prior": -0.001333333333333327,
+    "content_age_days": 0.0013333333333333437,
+    "log_impr_label_leak": 0.609
+  },
+  "withheld": [
+    "no second forward window (April not read)",
+    "position sentence from paper finding A dropped rather than softened",
+    "ML-07 vs ML-09 comparison is on the blended label and does not settle March ranking"
+  ],
+  "csv_committed": false
+}
