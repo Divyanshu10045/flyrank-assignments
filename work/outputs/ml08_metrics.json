@@ -1,0 +1,67 @@
+{
+  "assignment": "ML-08",
+  "method": "regularized logistic regression, degree-2 polynomial expansion (numpy/scipy)",
+  "method_note": "lightgbm/xgboost/sklearn.tree DLLs blocked by Application Control policy on this machine",
+  "features_contract": [
+    "log_impr_prior",
+    "ctr_prior_pct",
+    "wtd_pos_prior",
+    "active_days_prior",
+    "content_age_days"
+  ],
+  "features_probe": [
+    "log_impr_prior",
+    "ctr_prior_pct",
+    "wtd_pos_prior",
+    "active_days_prior",
+    "content_age_days",
+    "trend_pct_win"
+  ],
+  "split": "client_grouped_holdout",
+  "seed": 42,
+  "train_clients": 18,
+  "val_clients": 6,
+  "train_rows": 65489,
+  "val_rows": 1790,
+  "pool_rows": 67279,
+  "positives": 7445,
+  "base_rate": 0.11065860075209204,
+  "best_l2": 0.0001,
+  "ml07_p50": 0.72,
+  "model_A_val": {
+    "P@20": 0.3,
+    "P@50": 0.24,
+    "P@200": 0.265,
+    "n": 1790,
+    "pos": 140,
+    "base": 0.0782122905027933
+  },
+  "model_A_full": {
+    "P@20": 0.5,
+    "P@50": 0.48,
+    "P@200": 0.435,
+    "n": 67279,
+    "pos": 7445,
+    "base": 0.11065860075209204
+  },
+  "model_B_val": {
+    "P@20": 0.3,
+    "P@50": 0.24,
+    "P@200": 0.265,
+    "n": 1790,
+    "pos": 140,
+    "base": 0.0782122905027933
+  },
+  "model_B_full": {
+    "P@20": 0.6,
+    "P@50": 0.52,
+    "P@200": 0.455,
+    "n": 67279,
+    "pos": 7445,
+    "base": 0.11065860075209204
+  },
+  "beats_ml07_p50_contract_full": false,
+  "beats_ml07_p50_probe_full": false,
+  "label_caveat": "ML-07's 0.720 rides on the Jan+Feb blend denominator; forward Feb->Mar P@50 was 0.34. Same caveat applies here.",
+  "csv_committed": false
+}
