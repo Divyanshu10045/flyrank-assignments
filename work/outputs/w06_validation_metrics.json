@@ -104,6 +104,8 @@
     "removed_clearing_volume_floor": 36,
     "base_rate_frame_as_built": 0.11065860075209204,
     "base_rate_if_left_join_zero_filled": 0.11080664751014604,
+    "base_rate_if_left_join_nan_kept": 0.11027342477115858,
+    "base_rate_spread_across_three_readings": 0.0005332227389874683,
     "verdict": "outcome-conditioned selection, inherited from ML-04; not a feature leak"
   },
   "leak_trap": {
