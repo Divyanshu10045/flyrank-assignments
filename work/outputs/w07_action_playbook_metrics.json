@@ -1,0 +1,201 @@
+{
+  "assignment": "ML-10",
+  "audited_notebook": "work/notebooks/w07_action_playbook.ipynb",
+  "upstream_audit": "work/notebooks/w06_validation_audit.ipynb",
+  "role": "turns ML-09's audited model into a review queue; adds no new model",
+  "decision_point": "2026-03-01",
+  "feature_window": [
+    "2026-01-01",
+    "2026-02-28"
+  ],
+  "label_window": [
+    "2026-03-01",
+    "2026-03-31"
+  ],
+  "april_or_later_read": false,
+  "pool_rows": 67279,
+  "pool_clients": 24,
+  "positives": 7445,
+  "base_rate": 0.11065860075209204,
+  "model": {
+    "features": [
+      "log_impr_prior",
+      "ctr_prior_pct",
+      "wtd_pos_prior",
+      "active_days_prior",
+      "content_age_days"
+    ],
+    "excluded_probe_feature": "trend_pct_win",
+    "excluded_probe_p50_drop": 0.0006666666666666649,
+    "form": "degree-2 logistic regression (squares + all pairwise terms), L2",
+    "l2": 1.0,
+    "l2_provenance": "w06_validation_metrics.json before_after_p50['A contract (5 feats)'].l2_nested",
+    "l2_rejected": {
+      "ml08_shipped_tuned_on_its_own_holdout": 0.0001
+    },
+    "fits_performed": 1,
+    "fitted_on": "entire pool (deployment fit, in-sample by construction)",
+    "training_nll": 0.6571181668402943
+  },
+  "p_at_k_this_fit_in_sample": {
+    "P@20": 0.45,
+    "P@50": 0.36,
+    "P@200": 0.435
+  },
+  "p_at_k_inherited_from_ml09_out_of_fold": {
+    "P@20": 0.35,
+    "P@50": 0.3,
+    "P@200": 0.385,
+    "per_fold_P@50": [
+      0.26,
+      0.38,
+      0.54,
+      0.36,
+      0.48,
+      0.38
+    ],
+    "per_fold_sd": 0.09797958971132713,
+    "random_floor": 0.111
+  },
+  "queue": {
+    "cut_depth": 50,
+    "cut_rationale": "one afternoon of pages; the depth ML-09 measured (P@50)",
+    "score_is_near_a_volume_ranking": {
+      "p_at_50_by_model_score_in_sample": 0.36,
+      "p_at_50_by_prior_rate_30d_in_sample": 0.36,
+      "p_at_50_by_log_impr_prior_in_sample": 0.36,
+      "p_at_200_by_model_score_in_sample": 0.435,
+      "p_at_200_by_prior_rate_30d_in_sample": 0.405,
+      "spearman_score_vs_prior_rate_30d": 0.8018656052261974,
+      "top_cut_all_one_band": true,
+      "top_cut_min_prior_rate_30d": 45066.61016949153,
+      "pool_rows_at_or_above_that_volume": 191,
+      "band_B_share_of_all_positives": 0.5229012760241774,
+      "band_B_rows_in_top_cut": 0,
+      "band_B_first_rank": 9741,
+      "band_B_best_case_p_at_50": 0.36,
+      "reading": "model ties a raw volume sort at depth 50; the top cut is the largest pages only, while the middle band holds the majority of declines and never appears in it",
+      "not_fixed_because": "re-weighting features on a single label is what produced ML-08's holdout-tuned penalty"
+    },
+    "sort": "score desc, then wtd_pos_prior asc, impr_prior desc, content_hash_id asc",
+    "deterministic": true,
+    "actions_used": [
+      "monitor",
+      "protect",
+      "refresh"
+    ],
+    "actions_dropped_and_why": {
+      "expand": "ML-07 dropped it: the word-count idea came from thin_visible_page and was never tested",
+      "prune": "ML-07 dropped it: nothing in evidence says a page earning 200+ prior impressions should be removed"
+    },
+    "action_counts": {
+      "monitor": 67229,
+      "protect": 34,
+      "refresh": 16
+    },
+    "action_measured_decline_rate_in_sample": {
+      "monitor": 0.11047315890463937,
+      "protect": 0.17647058823529413,
+      "refresh": 0.75
+    },
+    "reason_codes": [
+      "A_over_2000_holding",
+      "A_over_2000_sliding",
+      "B_500_to_2000_holding",
+      "B_500_to_2000_sliding",
+      "C_under_500_holding",
+      "C_under_500_sliding"
+    ],
+    "reason_code_names_only": [
+      "prior-volume band",
+      "Jan->Feb sliding flag (reported, not scored)"
+    ]
+  },
+  "label_volume_floor_caveat": {
+    "floor": "prior_rate_30d >= 500",
+    "pool_rows_under_floor": 27068,
+    "share_of_pool_under_floor": 0.402324648107136,
+    "measured_rate_under_floor": 0.0,
+    "pool_rows_at_or_above_floor": 40211,
+    "base_rate_at_or_above_floor": 0.18514834249334758,
+    "reading": "the model's only validated input is the same quantity the label floor is written on",
+    "volume_band_summary": {
+      "A_over_2000": {
+        "rows": 18038,
+        "declines": 3552,
+        "base": 0.1969176183612374,
+        "med_score": 0.23106259118779643,
+        "top50": 50,
+        "share_of_positives": 0.4770987239758227
+      },
+      "B_500_to_2000": {
+        "rows": 22173,
+        "declines": 3893,
+        "base": 0.1755738961800388,
+        "med_score": 0.02118903187393734,
+        "top50": 0,
+        "share_of_positives": 0.5229012760241774
+      },
+      "C_under_500": {
+        "rows": 27068,
+        "declines": 0,
+        "base": 0.0,
+        "med_score": -0.19024553988369014,
+        "top50": 0,
+        "share_of_positives": 0.0
+      }
+    }
+  },
+  "evidenced_vs_decorative": {
+    "permutation_p50_drop_ml09": {
+      "log_impr_prior": 0.23433333333333337,
+      "ctr_prior_pct": -0.018,
+      "wtd_pos_prior": 0.03516666666666667,
+      "active_days_prior": 0.006833333333333334,
+      "content_age_days": 0.009666666666666672
+    },
+    "evidenced_inputs": [
+      "log_impr_prior"
+    ],
+    "reason_codes_avoid_unevidenced_features": true
+  },
+  "no_go_list": [
+    "no automated edit, publish, unpublish, redirect or client notification off this score",
+    "no causal claim: no intervention was run, so no 'fixing this recovers X'",
+    "no per-client reporting: 24 clients, one pooled model, no per-client number measured",
+    "expand and prune stay out until something tests them",
+    "no forecast past March: one forward window"
+  ],
+  "monitoring_triggers": {
+    "out_of_fold_p_at_50_fire_at_or_below": 0.2,
+    "out_of_fold_p_at_50_measured": 0.3,
+    "per_fold_sd_fire_above": 0.15,
+    "per_fold_sd_measured": 0.09797958971132713,
+    "pool_rows": 67279,
+    "pool_clients": 24,
+    "positives": 7445,
+    "base_rate": 0.11065860075209204,
+    "label_volume_floor": 500,
+    "label_drop_floor": -20,
+    "forward_windows_validated": 1,
+    "deliberately_not_a_trigger": "week-to-week score movement; per-fold spread exceeds detectable drift"
+  },
+  "withheld": [
+    "no second forward window (April never read)",
+    "no re-weighting to surface the middle volume band: that needs a second window, not a tuned fit",
+    "no per-client breakdown: no per-client number was measured",
+    "no new validation: the queue inherits ML-09's out-of-fold numbers rather than producing its own",
+    "no claim that the model beats ML-07 on March ranking: both sit on the same blended label"
+  ],
+  "exports": {
+    "queue_csv": "work/outputs/w07_action_queue.csv",
+    "queue_csv_rows": 67279,
+    "queue_csv_committed": false,
+    "queue_csv_gitignore_reason": "work/**/*.csv",
+    "receipt_json": "work/outputs/w07_action_playbook_metrics.json",
+    "receipt_json_committed": true,
+    "figure_png": "work/figures/w07_decline_rate_by_rank.png"
+  },
+  "client_names_or_urls_present": false,
+  "csv_committed": false
+}
