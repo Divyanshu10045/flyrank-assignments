@@ -53,16 +53,17 @@
     <h2>Abstract</h2>
     <div class="abstract">
       <p>
-        Which pages in a large content portfolio are worth a reviewer's attention first, and can that ordering
-        be justified without overclaiming? This study ranks 67,279 client&ndash;content pairs from the FlyRank ML
-        Internship warehouse using a January&ndash;February 2026 feature window and a March 2026 label window,
-        where 7,445 pairs are material declines (base rate 0.111). The method fits one degree-2 logistic model on
-        five features and evaluates it with a six-fold, client-grouped out-of-fold split, comparing it against a
-        raw-volume sort and, with a caveat, a frozen rule on the same rows. The model's out-of-fold precision at 50 is 0.300,
-        about 2.7&times; the random floor of 0.111, but a raw sort by prior volume reaches 0.360 at the same depth,
-        so the model is presented as a ranking aid rather than a predictive win. The output is a review queue that
-        orders pages for human inspection, with limits stated up front: one input carries a measurable signal, the
-        top of the queue is the largest pages only, and one forward window cannot establish stability.
+        A content team can only open a fraction of its pages, so the useful output is a defensible order for which
+        pages to review first, not a verdict on every page. This study ranks 67,279 client&ndash;content pairs from
+        the FlyRank ML Internship warehouse using a January&ndash;February 2026 feature window and a March 2026
+        label window, where 7,445 pairs are material declines (base rate 0.111). The method fits one degree-2
+        logistic model on five features and evaluates it with a six-fold, client-grouped out-of-fold split,
+        comparing it against a raw-volume sort and, with a caveat, a frozen rule on the same rows. The model's
+        out-of-fold precision at 50 is 0.300, about 2.7&times; the random floor of 0.111, but a raw sort by prior
+        volume reaches 0.360 at the same depth, so the model is presented as a ranking aid rather than a predictive
+        win. The output is a review queue that orders pages for human inspection, with limits stated up front: one
+        input carries a measurable signal, the top of the queue is the largest pages only, and one forward window
+        cannot establish stability.
       </p>
     </div>
   </section>
@@ -71,20 +72,33 @@
   <section id="introduction">
     <h2>Introduction</h2>
     <p>
-      A content team starts the month with more pages than it can open. Someone has to decide which fifty to look
-      at first, and that decision is usually made by gut feel or by sorting a spreadsheet on traffic. When the
-      portfolio runs to tens of thousands of pages, the choice of reading order is itself the product: a good order
-      finds real declines early, and a bad one wastes the reviewer's afternoon on pages that were never falling.
+      A content team starts the month with more pages than it can open. Someone decides which fifty to look at
+      first, usually by gut feel or by sorting a spreadsheet on traffic, and when the portfolio runs to tens of
+      thousands of pages that reading order is itself the product: a good order finds real declines early, and a
+      bad one spends the reviewer's afternoon on pages that were never falling. This is the operating question the
+      work answers &mdash; not <em>which pages are declining?</em> but <em>which pages should be reviewed first,
+      given limited capacity?</em>
     </p>
     <p>
-      This work builds and tests one such reading order. The question it answers is narrow and concrete: <em>which
-      pages should a reviewer open first?</em> It ranks 67,279 pages by how much they look like a decline under a
-      defined label, and it publishes the ranking alongside the evidence for and against trusting it.
+      The hard part is that not every drop is a decline. Traffic also falls for consolidation, when a sibling page
+      absorbs the demand; for seasonality; for shifts in how clicks are distributed; and for plain low-volume
+      noise. A useful review order has to survive those look-alikes: it should concentrate pages where the evidence
+      of real, sustained loss is strongest and leave the rest on watch. FlyRank's own platform makes this call with
+      hand-tuned, rule-based flags and combined scores, but those decisions are deliberately left out of the
+      released data, so any order published here is rebuilt from observable search signals alone.
+    </p>
+    <p>
+      This work builds and tests one such reading order. It answers a narrow question &mdash; <em>which pages
+      should a reviewer open first?</em> &mdash; by ranking 67,279 pages by how much they look like a decline under
+      a defined label, and it publishes the ranking alongside the evidence for and against trusting it. The
+      headline result is deliberately unflattering: at the depth a reviewer would actually use, the model does not
+      come out ahead of a raw sort by prior volume.
     </p>
     <p>
       The work is observational. It measures which pages resemble declines in the window studied, using only
       information available before the decision point. It does not test whether editing a page recovers traffic,
-      because no intervention was run &mdash; so nothing here should be read as a claim about causes or outcomes.
+      because no intervention was run, and it makes no claim about how any search engine ranks or selects pages
+      &mdash; so nothing here should be read as a claim about causes or outcomes.
     </p>
   </section>
 
