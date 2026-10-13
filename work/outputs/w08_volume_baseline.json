@@ -1,0 +1,107 @@
+{
+  "assignment": "ML-11",
+  "purpose": "raw-volume baseline computed on the same pooled out-of-fold rows and the same client-grouped folds as ML-09's model, for a like-for-like comparison",
+  "not_fit": "volume sort requires no fitting; only the row set and folds are shared with ML-09",
+  "frame": {
+    "decision_point": "2026-03-01",
+    "feature_window": [
+      "2026-01-01",
+      "2026-02-28"
+    ],
+    "label_window": [
+      "2026-03-01",
+      "2026-03-31"
+    ],
+    "pool_rows": 67279,
+    "pool_clients": 24,
+    "positives": 7445,
+    "base_rate": 0.11065860075209204
+  },
+  "fold_design": {
+    "grouped_by": "client_hash_id",
+    "folds": 6,
+    "seed": 42,
+    "source": "work/notebooks/w06_validation_audit.ipynb run_oof (seed 42, k=6)"
+  },
+  "volume_sort": {
+    "column": "prior_rate_30d (impressions per 30 days, Jan+Feb / 59 * 30)",
+    "tie_break": "stable original row order",
+    "pooled": {
+      "P@20": 0.35,
+      "P@50": 0.36,
+      "P@200": 0.405,
+      "n": 67279,
+      "pos": 7445,
+      "base": 0.11065860075209204
+    },
+    "per_fold": [
+      {
+        "fold": 1,
+        "n": 603,
+        "base": 0.06965174129353234,
+        "P@20": 0.3,
+        "P@50": 0.26,
+        "P@200": 0.21
+      },
+      {
+        "fold": 2,
+        "n": 10635,
+        "base": 0.07033380347907851,
+        "P@20": 0.4,
+        "P@50": 0.3,
+        "P@200": 0.21
+      },
+      {
+        "fold": 3,
+        "n": 9121,
+        "base": 0.1486679092204802,
+        "P@20": 0.6,
+        "P@50": 0.56,
+        "P@200": 0.515
+      },
+      {
+        "fold": 4,
+        "n": 17915,
+        "base": 0.11599218531956461,
+        "P@20": 0.3,
+        "P@50": 0.42,
+        "P@200": 0.39
+      },
+      {
+        "fold": 5,
+        "n": 2549,
+        "base": 0.0902314633189486,
+        "P@20": 0.45,
+        "P@50": 0.46,
+        "P@200": 0.335
+      },
+      {
+        "fold": 6,
+        "n": 26456,
+        "base": 0.11305563955246446,
+        "P@20": 0.3,
+        "P@50": 0.28,
+        "P@200": 0.31
+      }
+    ],
+    "per_fold_P@50_mean": 0.38000000000000006,
+    "per_fold_P@50_sd": 0.1193314711214104,
+    "per_fold_P@50_min": 0.26,
+    "per_fold_P@50_max": 0.56
+  },
+  "model_ml09_out_of_fold": {
+    "pooled_P@20": 0.35,
+    "pooled_P@50": 0.3,
+    "pooled_P@200": 0.385,
+    "per_fold_P@50": [
+      0.26,
+      0.38,
+      0.54,
+      0.36,
+      0.48,
+      0.38
+    ],
+    "per_fold_P@50_sd": 0.09797958971132713
+  },
+  "reading": "volume sort and the model are close on the same rows; state both plainly"
+}

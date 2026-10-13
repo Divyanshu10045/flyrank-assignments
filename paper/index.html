@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Which pages should a content team review first? A ranked triage of 67,279 pages</title>
+<meta name="description" content="A ranked, honestly-validated triage of 67,279 content pages: how a review order is built, where it helps, and where it stops being trustworthy.">
+<style>
+  :root { --ink:#1a202c; --muted:#4a5568; --line:#e2e8f0; --accent:#2b6cb0; --warn:#c53030; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:#fbfaf8; color:var(--ink);
+         font:17px/1.65 Georgia, "Times New Roman", serif; }
+  main { max-width:760px; margin:0 auto; padding:48px 22px 80px; }
+  h1 { font-size:2.0rem; line-height:1.22; margin:0 0 .25em; letter-spacing:-.01em; }
+  .subtitle { color:var(--muted); font-size:1.06rem; font-style:italic; margin:0 0 2.4em; }
+  h2 { font-size:1.32rem; margin:2.6em 0 .5em; padding-top:.6em; border-top:1px solid var(--line); }
+  h3 { font-size:1.06rem; margin:1.7em 0 .4em; }
+  p { margin:0 0 1em; }
+  a { color:var(--accent); }
+  .abstract { background:#fff; border:1px solid var(--line); border-radius:8px;
+              padding:20px 22px; margin:0 0 1.6em; }
+  .abstract p { margin:0; }
+  table { border-collapse:collapse; width:100%; margin:.4em 0 1.1em; font-size:.95rem;
+          font-family:-apple-system, Segoe UI, Roboto, sans-serif; }
+  caption { caption-side:top; text-align:left; color:var(--muted); font-size:.86rem;
+            padding-bottom:.35em; }
+  th, td { text-align:right; padding:7px 10px; border-bottom:1px solid var(--line); }
+  th:first-child, td:first-child { text-align:left; }
+  thead th { border-bottom:2px solid #cbd5e0; }
+  .win { color:var(--warn); font-weight:600; }
+  figure { margin:1.4em 0 1.8em; }
+  figure img { width:100%; height:auto; border:1px solid var(--line); border-radius:6px;
+               background:#fff; }
+  figcaption { color:var(--muted); font-size:.9rem;
+               font-family:-apple-system, Segoe UI, Roboto, sans-serif; margin-top:.5em; }
+  .note { color:var(--muted); font-size:.92rem; }
+  footer { margin-top:3em; padding-top:1.2em; border-top:1px solid var(--line);
+           color:var(--muted); font-size:.9rem; }
+  code { font-family:ui-monospace, Consolas, monospace; font-size:.9em;
+         background:#edf2f7; padding:1px 5px; border-radius:4px; }
+</style>
+</head>
+<body>
+<main>
+
+  <header>
+    <h1>Which pages should a content team review first?</h1>
+    <p class="subtitle">A ranked, honestly-validated triage of 67,279 pages &mdash; and where the ranking stops being trustworthy.</p>
+  </header>
+
+  <!-- 1. TITLE + ABSTRACT -->
+  <section id="abstract">
+    <h2>Abstract</h2>
+    <div class="abstract">
+      <p>
+        Which pages in a large content portfolio are worth a reviewer's attention first, and can that ordering
+        be justified without overclaiming? This study ranks 67,279 client&ndash;content pairs from the FlyRank ML
+        Internship warehouse using a January&ndash;February 2026 feature window and a March 2026 label window,
+        where 7,445 pairs are material declines (base rate 0.111). The method fits one degree-2 logistic model on
+        five features and evaluates it with a six-fold, client-grouped out-of-fold split, comparing it against a
+        raw-volume sort and a frozen rule on the same rows. The model's out-of-fold precision at 50 is 0.300,
+        about 2.7&times; the random floor of 0.111, but a raw sort by prior volume reaches 0.360 at the same depth,
+        so the model is presented as a ranking aid rather than a predictive win. The output is a review queue that
+        orders pages for human inspection, with limits stated up front: one input carries a measurable signal, the
+        top of the queue is the largest pages only, and one forward window cannot establish stability.
+      </p>
+    </div>
+  </section>
+
+  <!-- 2. INTRODUCTION -->
+  <section id="introduction">
+    <h2>Introduction</h2>
+    <p>
+      A content team starts the month with more pages than it can open. Someone has to decide which fifty to look
+      at first, and that decision is usually made by gut feel or by sorting a spreadsheet on traffic. When the
+      portfolio runs to tens of thousands of pages, the choice of reading order is itself the product: a good order
+      finds real declines early, and a bad one wastes the reviewer's afternoon on pages that were never falling.
+    </p>
+    <p>
+      This work builds and tests one such reading order. The question it answers is narrow and concrete: <em>which
+      pages should a reviewer open first?</em> It ranks 67,279 pages by how much they look like a decline under a
+      defined label, and it publishes the ranking alongside the evidence for and against trusting it.
+    </p>
+    <p>
+      The work is observational. It measures which pages resemble declines in the window studied, using only
+      information available before the decision point. It does not test whether editing a page recovers traffic,
+      because no intervention was run &mdash; so nothing here should be read as a claim about causes or outcomes.
+    </p>
+  </section>
+
+  <!-- 3. DATA -->
+  <section id="data">
+    <h2>Data</h2>
+    <p>
+      The source is a pseudonymized search-performance warehouse of roughly 79&nbsp;million daily rows, published
+      on Hugging Face behind a gated access request. The analysis used only its January&ndash;March 2026 partitions,
+      for a lane of 24 clients, condensed into one row per (client, page) pair. The headline number below, 67,279,
+      is that modelled pool &mdash; not the size of the warehouse.
+    </p>
+    <p>
+      <strong>Unit of analysis:</strong> one (client, page) pair, observed at a single decision point of
+      1&nbsp;March&nbsp;2026. <strong>Windows:</strong> features from 1&nbsp;January to 28&nbsp;February 2026
+      (59 days); a decision point on 1&nbsp;March; and a label from 1&nbsp;March to 31&nbsp;March (31 days). The
+      feature and label windows do not overlap, and April or later was never read.
+    </p>
+    <p>
+      <strong>Tables used:</strong> the daily performance fact table (feature and label source), a per-client
+      dimension table (history start and access flags), and a content dimension table (page age at the decision
+      point).
+    </p>
+    <p><strong>What was excluded, and why:</strong></p>
+    <table>
+      <caption>Exclusions and their reasons. Frame as built: 119,115 rows across 28 clients; modelled pool: 67,279 rows across 24 clients.</caption>
+      <thead><tr><th>Excluded</th><th>Reason</th></tr></thead>
+      <tbody>
+        <tr><td>Pages under 200 prior impressions</td><td>Too little history to call a decline; the pool floor.</td></tr>
+        <tr><td>GA4 engagement columns</td><td>Only 8 of 104 clients had GA4 live over the feature window.</td></tr>
+        <tr><td>Last-updated date</td><td>78% of rows carry an update dated after the decision point, so any "days since update" feature would read the future.</td></tr>
+        <tr><td>90-day query table</td><td>Its window falls entirely after the decision point.</td></tr>
+      </tbody>
+    </table>
+    <p>
+      One further effect is reported in full rather than hidden: an inner join on the label month drops 235 rows
+      (0.35% of the decided pool) whose pages are gone by March. That makes frame membership mildly
+      outcome-conditioned; the base rate moves by less than 0.0006 across three join readings, so the effect is
+      minor but real. It is a property of the frame, not a leak of the label into the features.
+    </p>
+  </section>
+
+  <!-- 4. METHODOLOGY -->
+  <section id="methodology">
+    <h2>Methodology</h2>
+    <p>
+      <strong>The label.</strong> A page counts as a material decline when it clears the pool floor (200+ prior
+      impressions), its January&ndash;February rate is at least 500 impressions per 30 days, and its March rate
+      drops 20% or more below that prior rate. The label is defined entirely on data that arrives after the
+      decision point; the features never see it.
+    </p>
+    <p>
+      <strong>The features.</strong> Five inputs are scored: prior volume (log impressions), prior click-through
+      rate, prior weighted average position, prior count of active days, and page age at the decision point. A
+      sixth quantity &mdash; the January-to-February trend &mdash; is read to describe a page but never scored,
+      because adding it lowered the honest out-of-fold result.
+    </p>
+    <p>
+      <strong>The model.</strong> One degree-2 logistic regression &mdash; the five features plus every squared
+      term and every pairwise product &mdash; fit once on the whole pool for deployment. The L2 penalty is 1.0,
+      chosen by an inner client-grouped split inside the training folds only, never on the rows it is reported
+      against. The fit is deterministic (L-BFGS-B from zeros; no sampling).
+    </p>
+    <p>
+      <strong>The baselines.</strong> Two baselines are scored on the same rows. The first is a raw sort by prior
+      volume, which requires no fitting at all. The second is a frozen rule from earlier work; its headline number
+      sits on a label whose denominator it shares with the data, so it is reported separately and not compared
+      like-for-like.
+    </p>
+    <p>
+      <strong>Validation.</strong> A six-fold, client-grouped out-of-fold split: every pool row is held out exactly
+      once, and no client appears on both sides of a fold. The base rate is printed beside every precision figure,
+      so a reader can always see what "good" is being measured against. The fold seed is 42.
+    </p>
+    <p>
+      <strong>Leakage checks.</strong> The feature and label windows are disjoint by construction; permutation
+      importance shuffles each feature inside held-out client blocks; and a deliberate leak &mdash; adding the
+      label's own March volume as a feature &mdash; drove precision at 50 to 1.000. That last check confirms the
+      evaluation can detect a leak when one exists, which is what makes the honest number believable.
+    </p>
+  </section>
+
+  <!-- 5. RESULTS -->
+  <section id="results">
+    <h2>Results</h2>
+    <p>
+      On the pooled out-of-fold rows, the model and a raw volume sort are close, and the volume sort is ahead at
+      depth 50. The base rate is 0.111 throughout.
+    </p>
+    <table>
+      <caption><strong>Table 1.</strong> Pooled out-of-fold precision by depth (n = 67,279; base rate 0.111). Higher is better; the random row is the floor any ranking must beat.</caption>
+      <thead><tr><th>Ranker</th><th>P@20</th><th>P@50</th><th>P@200</th></tr></thead>
+      <tbody>
+        <tr><td>Random (base rate)</td><td>0.111</td><td>0.111</td><td>0.111</td></tr>
+        <tr><td>Raw volume sort (no fitting)</td><td class="win">0.350</td><td class="win">0.360</td><td class="win">0.405</td></tr>
+        <tr><td>Contract model, 5 features (out-of-fold)</td><td>0.350</td><td>0.300</td><td>0.385</td></tr>
+      </tbody>
+    </table>
+    <p>
+      The honest number the queue inherits is 0.300 at precision 50 &mdash; roughly three of the first fifty pages
+      are material declines under this label, about 2.7&times; the random floor. A raw sort by prior volume reaches
+      0.360 at the same depth with no model at all. That is the central finding, stated plainly: on these rows, the
+      model does not beat the obvious baseline.
+    </p>
+    <figure>
+      <img src="assets/model_vs_volume.png" alt="Bar chart of pooled precision at depths 20, 50 and 200 for the raw volume sort and the model, against a dashed base-rate line.">
+      <figcaption><strong>Chart 1.</strong> Pooled precision by depth, model versus raw-volume sort (n = 67,279; base rate 0.111). The volume sort matches the model at depth 20 and exceeds it at 50 and 200.</figcaption>
+    </figure>
+    <p>
+      Averaged across the six folds, the model is slightly ahead of the volume sort &mdash; 0.400 against 0.380 at
+      precision 50 &mdash; but both sit inside a spread of about 0.10, so no single depth is treated as a win.
+    </p>
+    <table>
+      <caption><strong>Table 2.</strong> Per-fold precision at 50 on the same client-grouped folds. Rows are very uneven (603 to 26,456), which is itself part of why the fold-to-fold spread is large.</caption>
+      <thead><tr><th>Fold</th><th>Rows</th><th>Base</th><th>Model P@50</th><th>Volume P@50</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>603</td><td>0.070</td><td>0.260</td><td>0.260</td></tr>
+        <tr><td>2</td><td>10,635</td><td>0.070</td><td>0.380</td><td>0.300</td></tr>
+        <tr><td>3</td><td>9,121</td><td>0.149</td><td>0.540</td><td>0.560</td></tr>
+        <tr><td>4</td><td>17,915</td><td>0.116</td><td>0.360</td><td>0.420</td></tr>
+        <tr><td>5</td><td>2,549</td><td>0.090</td><td>0.480</td><td>0.460</td></tr>
+        <tr><td>6</td><td>26,456</td><td>0.113</td><td>0.380</td><td>0.280</td></tr>
+        <tr><td>Mean</td><td>&mdash;</td><td>&mdash;</td><td>0.400</td><td>0.380</td></tr>
+      </tbody>
+    </table>
+    <p class="note">
+      For completeness: the earlier frozen rule scored 0.720 on this label, but that number shares the
+      January&ndash;February denominator with the label and is not like-for-like. Its forward probe, measured
+      against a label that cannot see January, was 0.340. Both are shown so neither is mistaken for the model's
+      score.
+    </p>
+    <figure>
+      <img src="assets/queue_decline_rate_by_rank.png" alt="Line chart of measured material-decline rate across the queue, from rank 1 to rank 67,279, with a dashed base-rate line and most of the tail near zero.">
+      <figcaption><strong>Chart 2.</strong> Where the queue is dense: measured material-decline rate by rank bucket (n = 67,279; base rate 0.111). The reading order concentrates declines at the top; most of the tail sits at or below the base rate. In-sample, one label window.</figcaption>
+    </figure>
+  </section>
+
+  <!-- 6. LIMITATIONS -->
+  <section id="limitations">
+    <h2>Limitations and honest framing</h2>
+    <p>
+      <strong>One input carries a detectable signal.</strong> Under permutation importance inside held-out client
+      blocks, prior volume costs 0.234 of precision at 50 when shuffled. The other four features move the result by
+      between &minus;0.018 and +0.035, which is indistinguishable from noise. The model is, in effect, a
+      well-dressed volume sort.
+    </p>
+    <p>
+      <strong>The top of the queue is the largest pages only.</strong> The middle volume band (500&ndash;2,000
+      impressions per 30 days) holds 52.3% of all declines in the pool and receives zero slots in the top 50; its
+      first page appears at rank 9,741. The score correlates 0.80 with raw volume. The queue is honest about the
+      biggest pages and structurally blind to the middle of the portfolio.
+    </p>
+    <p>
+      <strong>The label contains its own floor.</strong> A material decline requires at least 500 prior
+      impressions, so 40.2% of the pool is a decline by definition of the floor rather than by observation. The
+      model's only validated input &mdash; prior volume &mdash; is written on the same quantity as that floor, which
+      is the deepest reason the ranking tracks volume.
+    </p>
+    <p>
+      <strong>One forward window only.</strong> Features end on 28 February and the label is March. April was never
+      read, so there is no second window in which to test whether any of this is stable.
+    </p>
+    <p>
+      <strong>Outcome-conditioned membership.</strong> The March inner join that removes 235 pages (0.35%) makes the
+      frame slightly dependent on the outcome, as described in the Data section. The effect on the base rate is
+      below 0.0006, but it is a real (if minor) distortion of the population.
+    </p>
+    <p>
+      <strong>Excluded fields.</strong> The last-updated date is excluded because 78% of rows carry post-decision
+      updates; GA4 columns are excluded because only 8 of 104 clients had GA4 live over the window. No causal or
+      search-engine claim is made anywhere on this page: the score says a page <em>looks like</em> a decline under
+      one label, not why, and no intervention was run to test whether acting on it helps.
+    </p>
+  </section>
+
+  <!-- 7. RANKED RECOMMENDATIONS -->
+  <section id="recommendations">
+    <h2>Ranked recommendations</h2>
+    <p>
+      The ranking becomes useful when it is turned into actions a person can take. Three actions are assigned, from
+      two facts the evidence actually supports: which prior-volume band a page sits in, and whether its
+      January-to-February trend is already sliding. Nothing else &mdash; no automated edit, no publish, no client
+      notification &mdash; is triggered from this score.
+    </p>
+    <table>
+      <caption><strong>Table 3.</strong> The three actions and their in-sample measured decline rate on the queue (n = 67,279). These rates describe the labelled window, not the result of acting.</caption>
+      <thead><tr><th>Action</th><th>Who</th><th>Measured decline rate</th></tr></thead>
+      <tbody>
+        <tr><td>Refresh</td><td>Top 50 and already sliding</td><td>0.750</td></tr>
+        <tr><td>Protect</td><td>Top 50 and holding</td><td>0.176</td></tr>
+        <tr><td>Monitor</td><td>Everything else</td><td>0.110</td></tr>
+      </tbody>
+    </table>
+    <p>
+      In practice a reviewer opens the sixteen <em>refresh</em> pages first, checks the thirty-four
+      <em>protect</em> pages for early wobble, and leaves the remaining 67,229 pages on a watch list. Reason codes
+      name only the two supported facts (volume band, and holding versus sliding), so the queue never explains
+      itself with a feature that the permutation test found to be noise.
+    </p>
+    <p>
+      Two actions are deliberately withheld. Automatic expansion and pruning of pages are not offered, because
+      nothing in this evidence says a page earning 200 or more prior impressions should be created or removed.
+      They stay out until something tests them.
+    </p>
+  </section>
+
+  <!-- 8. REPRODUCIBILITY -->
+  <section id="reproducibility">
+    <h2>Reproducibility</h2>
+    <p>
+      The repository carries the full trail. Each notebook below is the source for one part of the work, and each
+      writes a small machine-readable record of its numbers. The capstone notebook reads those records only, so it
+      reruns offline in seconds:
+    </p>
+    <table>
+      <caption>Notebooks and what each contributes.</caption>
+      <thead><tr><th>Notebook</th><th>Contribution</th></tr></thead>
+      <tbody>
+        <tr><td><code>w01_research_question.ipynb</code></td><td>The question and the lane.</td></tr>
+        <tr><td><code>w03_data_contract.ipynb</code></td><td>The data contract: tables, windows, exclusions.</td></tr>
+        <tr><td><code>w04_baseline_score.ipynb</code></td><td>The frozen rule baseline.</td></tr>
+        <tr><td><code>w05_model.ipynb</code></td><td>The model and the client-grouped holdout.</td></tr>
+        <tr><td><code>w06_validation_audit.ipynb</code></td><td>The honest out-of-fold evaluation and leakage checks.</td></tr>
+        <tr><td><code>w07_action_playbook.ipynb</code></td><td>The ranked queue and the action playbook.</td></tr>
+        <tr><td><code>capstone.ipynb</code></td><td>Reads the records and mirrors this page; runs offline.</td></tr>
+      </tbody>
+    </table>
+    <p>
+      The fold seed is 42 with six client-grouped folds, and the deployment fit is deterministic. The warehouse is
+      gated on Hugging Face and needs an access request and a read token; no data is included in the repository,
+      and the ranked queue is regenerated rather than published. The code lives at
+      <a href="https://github.com/Divyanshu10045/flyrank-assignments">github.com/Divyanshu10045/flyrank-assignments</a>.
+    </p>
+  </section>
+
+  <!-- 9. ACKNOWLEDGMENTS -->
+  <section id="acknowledgments">
+    <h2>Acknowledgments and data credit</h2>
+    <p>
+      Built on the FlyRank ML Internship dataset &mdash; <a href="https://flyrank.ai">https://flyrank.ai</a>.
+    </p>
+    <p class="note">
+      All data is pseudonymized. This page contains only aggregates: no client names, page URLs, query text, or
+      row-level records appear anywhere in it.
+    </p>
+  </section>
+
+  <footer>
+    <p>Observational decision-support research. One label window (March&nbsp;2026), one forward test; no causal claims.</p>
+  </footer>
+
+</main>
+</body>
+</html>
