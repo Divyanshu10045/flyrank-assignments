@@ -33,7 +33,7 @@ jobs:
           test -f outputs/model_report.md
           echo "Pipeline produced expected outputs."
 
-      - name: Run ML-10 workflow tests (offline: paths, artifacts, invariants)
+      - name: Run ML-10 workflow tests (offline paths, artifacts, invariants)
         run: python work/tests/test_ml10_workflow.py
 
   data-leak-check:
